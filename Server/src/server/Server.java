@@ -9,7 +9,10 @@ import java.util.List;
 
 
 public class Server {
-    
+
+    List<String> questions = new ArrayList<>();
+    List<String> correct_answer = new ArrayList<>();
+    List<List<String>> answers = new ArrayList<>();
 
     public static void readCsv() {
 
@@ -18,8 +21,9 @@ public class Server {
         String line;
         List<String> questions = new ArrayList<>();
         List<String> correct_answer = new ArrayList<>();
-        List<String> temporal_answer;
         List<List<String>> answers = new ArrayList<>();
+
+        List<String> temporal_answer;
 
 
         try {
@@ -65,6 +69,7 @@ public class Server {
     public static void main(String[] args){
 
         readCsv();
+
 
 
 
