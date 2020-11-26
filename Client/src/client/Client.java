@@ -24,7 +24,6 @@ public class Client {
             synchronized(client) {
                 client.wait();
 
-
             }
 
         } catch (RemoteException e) {
