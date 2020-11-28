@@ -2,9 +2,12 @@ package common;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.List;
+
 
 public interface ClientInterface extends Remote {
 
-    void notifyStartExam(List<String> questions, List<List<String>> answers) throws RemoteException;
+    public void sendQuestion (Question q) throws RemoteException;
+    public int sendGrade(ClientInterface student) throws RemoteException;
+    public void sendMessage(String message) throws  RemoteException;
+    public void notifyStartExam(Question q) throws RemoteException;
 }

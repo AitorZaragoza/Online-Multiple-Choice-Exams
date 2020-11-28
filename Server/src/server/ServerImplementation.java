@@ -1,5 +1,6 @@
 package server;
 
+import common.Answer;
 import common.ClientInterface;
 import common.Question;
 import common.ServerInterface;
@@ -9,24 +10,44 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class ServerImplementation extends UnicastRemoteObject implements ServerInterface {
-    private List<ClientInterface> clients = new ArrayList<>();
+
+    public List<ClientInterface> students = new ArrayList<>();
     public List<Question> exam = new ArrayList<>();
-    public HashMap<String, Integer> solutions = new HashMap<>();
+    public HashMap<String, Integer> examSolution = new HashMap<>();
+    public boolean start = false;
 
 
-    protected ServerImplementation() throws RemoteException {
+    public ServerImplementation() throws RemoteException {
         super();
+    }
+
+    public void startExam() {
+        Scanner keyboard = new Scanner(System.in);
+        System.out.println("Prem tecla per tancar l'examen");
+        keyboard.nextLine();
+        synchronized (this) {
+            this.start = true;
+        }
+        List<ClientInterface> error_students = new ArrayList<ClientInterface>();
+        for (ClientInterface c : students) {
+            try {
+                c.notifyStartExam(exam.get(0)); // notificar als alumnes que comença l'examen i enviar la primera pregunta
+
+            } catch (RemoteException e) {
+                System.out.println(" Student is not reachable");
+                error_students.add(c);
+            }
+        }
+        for (ClientInterface c : error_students) {
+            this.students.remove(c);
+        }
     }
 
     public void readExamFile() {
 
-        Question question = new Question();
 
         String csvFile = "ExamQuestions.csv";
         BufferedReader br = null;
@@ -36,6 +57,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         try {
             br = new BufferedReader(new FileReader(csvFile));
             while ((line = br.readLine()) != null) {
+                Question question = new Question();
 
                 String[] data = line.split(";");
                 int size = data.length;
@@ -48,7 +70,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
 
                 question.setQuestion(questionRead);
                 question.setChoice(choiceRead);
-                solutions.put(questionRead, answerRead);
+                examSolution.put(questionRead, answerRead);
 
                 exam.add(question);
 
@@ -69,32 +91,28 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
     }
 
     @Override
-    public void registerStudents(ClientInterface client, String universityID) {
-        synchronized (this) {
-            if(this.clients.size() < 4) {
-                clients.add(client);
-                this.notify();
+    public void addStudent(ClientInterface student) throws RemoteException {
+        synchronized (student) {
+            if (start == false) {
+                students.add(student);
+            } else {
+                student.sendMessage("Has arribat tard al examen");
+                return;
             }
         }
     }
 
-    public void notifyStartExam( List<String> questions, List<List<String>> answers){
-        List<ClientInterface> error_clients = new ArrayList<>();
-        for (ClientInterface client : this.clients) {
-            try {
-                client.notifyStartExam(questions, answers);
-            } catch (RemoteException e) {
-                System.out.println("Client is not reachable");
-                error_clients.add(client);
-            }
-        }
-        for(ClientInterface c: error_clients){
-            this.clients.remove(c);
-        }
+    @Override
+    public void sendAnswer(ClientInterface student, Answer answer) throws RemoteException {
+        System.out.println(student + answer.getQuestion() + answer.getAnswer());
+
     }
 
-    public int getNumStudents(){
-        return clients.size();
-    }
+    public boolean checkAnswer(Answer answer) {
+        examSolution.get(answer.getQuestion()).compareTo(answer.getAnswer());
 
+        return false;
+
+
+    }
 }

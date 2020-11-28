@@ -5,5 +5,7 @@ import java.rmi.RemoteException;
 
 public interface ServerInterface extends Remote {
 
-    void registerStudents(ClientInterface client, String universityID) throws RemoteException;
+    void addStudent(ClientInterface client) throws RemoteException;
+    void sendAnswer(ClientInterface client, Answer answer) throws RemoteException;
+
 }
