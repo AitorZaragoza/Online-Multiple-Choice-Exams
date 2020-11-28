@@ -7,7 +7,7 @@ public interface ClientInterface extends Remote {
     public void sendQuestion (Question q) throws RemoteException;
     public int sendGrade(ClientInterface student) throws RemoteException;
     public void sendMessage(String message) throws  RemoteException;
-    public void notifyStartExam() throws RemoteException;
+    public void notifyStartExam(Question q) throws RemoteException;
 
 
 }

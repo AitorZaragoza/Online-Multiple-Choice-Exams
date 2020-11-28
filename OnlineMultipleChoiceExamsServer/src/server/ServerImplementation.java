@@ -1,11 +1,11 @@
 package server;
 
+import common.Answer;
 import common.ClientInterface;
 import common.Question;
 import common.ServerInterface;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -13,6 +13,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
 public class ServerImplementation extends UnicastRemoteObject implements ServerInterface {
+
     public List<ClientInterface> students = new ArrayList<>();
     public List<Question> exam = new ArrayList<>();
     public HashMap<String, Integer> solutions = new HashMap<>();
@@ -30,22 +31,19 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         synchronized (this) {
             this.start = true;
         }
-
         List<ClientInterface> error_students = new ArrayList<ClientInterface>();
-        for (ClientInterface c :students) {
-            try{
-                c.notifyStartExam(); // notificar als alumnes que comença l'examen
-                c.sendQuestion(exam.get(0)); // enviar primera pregunta a tots
-            }catch(RemoteException e){
+        for (ClientInterface c : students) {
+            try {
+                c.notifyStartExam(exam.get(0)); // notificar als alumnes que comença l'examen i enviar la primera pregunta
+
+            } catch (RemoteException e) {
                 System.out.println(" Student is not reachable");
                 error_students.add(c);
             }
         }
-        for(ClientInterface c: error_students ){
+        for (ClientInterface c : error_students) {
             this.students.remove(c);
         }
-
-
     }
 
     public void readExamFile() {
@@ -92,8 +90,6 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         }
     }
 
-
-
     @Override
     public void addStudent(ClientInterface student) throws RemoteException {
         synchronized (this) {
@@ -107,8 +103,12 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
     }
 
     @Override
-    public void sendAnswer(HashMap<String, Integer> answer) throws RemoteException {
+    public void sendAnswer(Answer answer) throws RemoteException {
 
+
+    }
+
+    public void checkAnswer( Answer answer){
 
     }
 

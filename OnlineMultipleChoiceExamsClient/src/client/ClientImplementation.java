@@ -1,17 +1,19 @@
 package client;
 
+import common.Answer;
 import common.ClientInterface;
 import common.Question;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
 import java.util.Scanner;
 
 public class ClientImplementation extends UnicastRemoteObject implements ClientInterface {
 
     String studentId;
-    HashMap<String, Integer> questionAnswer = new HashMap<>();
+    Integer questionNumber = 0;
+    Answer answer = new Answer();
+
 
     public ClientImplementation() throws RemoteException {
         super();
@@ -29,13 +31,16 @@ public class ClientImplementation extends UnicastRemoteObject implements ClientI
 
     @Override
     public void sendQuestion(Question q) {
+
         System.out.println(q.getQuestion());
         System.out.println(q.getChoice());
 
         Scanner keyboard = new Scanner(System.in);
         System.out.println("Enter answer");
-        int answer = keyboard.nextInt();
-        questionAnswer.put(q.getQuestion(), answer);
+
+        answer.setQuestionAnswer(q.getQuestion(), keyboard.nextInt());
+        answer.setQuestionNumber(questionNumber);
+        questionNumber ++;
 
     }
 
@@ -48,11 +53,13 @@ public class ClientImplementation extends UnicastRemoteObject implements ClientI
         System.out.println(message);
     }
 
-    public void notifyStartExam(){
+    public void notifyStartExam(Question q){
         System.out.println("El examen comença");
+        sendQuestion(q);
         synchronized (this) {
             this.notify();
         }
+
     }
 
 }

@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public interface ServerInterface extends Remote {
     public void addStudent(ClientInterface student) throws RemoteException;
-    public void sendAnswer(HashMap<String, Integer> answer) throws RemoteException;
+    public void sendAnswer(ClientInterface student, Answer answer) throws RemoteException;
 
 }
 

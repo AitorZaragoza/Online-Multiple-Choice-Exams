@@ -18,7 +18,8 @@ public class Client {
                 student.setStudentId();
                 stub.addStudent(student);
                 student.wait();
-                stub.sendAnswer(student.questionAnswer);
+                stub.sendAnswer(student, student.answer);
+                
 
             }
 
