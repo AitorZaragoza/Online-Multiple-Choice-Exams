@@ -19,7 +19,7 @@ public class Client {
                 stub.addStudent(student);
                 student.wait();
                 stub.sendAnswer(student, student.answer);
-                
+
 
             }
 

@@ -103,7 +103,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
     }
 
     @Override
-    public void sendAnswer(Answer answer) throws RemoteException {
+    public void sendAnswer(ClientInterface student, Answer answer) throws RemoteException {
 
 
     }
