@@ -16,7 +16,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
 
     public List<ClientInterface> students = new ArrayList<>();
     public List<Question> exam = new ArrayList<>();
-    public HashMap<String, Integer> solutions = new HashMap<>();
+    public HashMap<String, Integer> examSolution = new HashMap<>();
     public boolean start = false;
 
 
@@ -70,7 +70,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
 
                 question.setQuestion(questionRead);
                 question.setChoice(choiceRead);
-                solutions.put(questionRead, answerRead);
+                examSolution.put(questionRead, answerRead);
 
                 exam.add(question);
 
@@ -108,13 +108,11 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
 
     }
 
-    public void checkAnswer( Answer answer){
+    public boolean checkAnswer(Answer answer) {
+        examSolution.get(answer.getQuestion()).compareTo(answer.getAnswer());
+
+        return false;
+
 
     }
-
-
-
-
-
-
 }

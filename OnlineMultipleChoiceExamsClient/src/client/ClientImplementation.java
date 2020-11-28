@@ -38,7 +38,8 @@ public class ClientImplementation extends UnicastRemoteObject implements ClientI
         Scanner keyboard = new Scanner(System.in);
         System.out.println("Enter answer");
 
-        answer.setQuestionAnswer(q.getQuestion(), keyboard.nextInt());
+        answer.setQuestion(q.getQuestion());
+        answer.setAnswer(keyboard.nextInt());
         answer.setQuestionNumber(questionNumber);
         questionNumber ++;
 
