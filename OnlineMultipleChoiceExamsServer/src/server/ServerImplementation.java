@@ -23,9 +23,33 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         super();
     }
 
+    public void startExam() {
+        Scanner keyboard = new Scanner(System.in);
+        System.out.println("Prem tecla per tancar l'examen");
+        keyboard.nextLine();
+        synchronized (this) {
+            this.start = true;
+        }
+
+        List<ClientInterface> error_students = new ArrayList<ClientInterface>();
+        for (ClientInterface c :students) {
+            try{
+                c.notifyStartExam(); // notificar als alumnes que comença l'examen
+                c.sendQuestion(exam.get(0)); // enviar primera pregunta a tots
+            }catch(RemoteException e){
+                System.out.println(" Student is not reachable");
+                error_students.add(c);
+            }
+        }
+        for(ClientInterface c: error_students ){
+            this.students.remove(c);
+        }
+
+
+    }
+
     public void readExamFile() {
 
-        Question question = new Question();
 
         String csvFile = "ExamQuestions.csv";
         BufferedReader br = null;
@@ -35,6 +59,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         try {
             br = new BufferedReader(new FileReader(csvFile));
             while ((line = br.readLine()) != null) {
+                Question question = new Question();
 
                 String[] data = line.split(";");
                 int size = data.length;
@@ -66,26 +91,30 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             }
         }
     }
-    public void startExam() {
-        Scanner keyboard = new Scanner(System.in);
-        System.out.println("Prem tecla per tancar l'examen");
-        keyboard.nextLine();
-        synchronized (this) {
-            this.start = true;
-        }
-    }
+
+
 
     @Override
-    public void addStudent(ClientInterface student) {
+    public void addStudent(ClientInterface student) throws RemoteException {
         synchronized (this) {
             if (start == false) {
                 students.add(student);
             } else {
-                System.out.println("Has arribat tard al examen");
+                student.sendMessage("Has arribat tard al examen");
                 return;
             }
         }
     }
 
+    @Override
+    public void sendAnswer(HashMap<String, Integer> answer) throws RemoteException {
+
 
     }
+
+ 
+
+
+
+
+}

@@ -1,5 +1,6 @@
 package server;
 
+import java.rmi.AccessException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -34,26 +35,9 @@ public class Server {
             registry.rebind("Hello", (ServerImplementation) obj);
 
             while (true) {
-
                 obj.readExamFile();
                 obj.startExam();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                break;
 
 
 
