@@ -10,18 +10,16 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class ServerImplementation extends UnicastRemoteObject implements ServerInterface {
     public List<ClientInterface> students = new ArrayList<>();
     public List<Question> exam = new ArrayList<>();
     public HashMap<String, Integer> solutions = new HashMap<>();
+    public boolean start = false;
 
 
-    protected ServerImplementation() throws RemoteException {
+    public ServerImplementation() throws RemoteException {
         super();
     }
 
@@ -68,6 +66,26 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             }
         }
     }
+    public void startExam() {
+        Scanner keyboard = new Scanner(System.in);
+        System.out.println("Prem tecla per tancar l'examen");
+        keyboard.nextLine();
+        synchronized (this) {
+            this.start = true;
+        }
+    }
+
+    @Override
+    public void addStudent(ClientInterface student) {
+        synchronized (this) {
+            if (start == false) {
+                students.add(student);
+            } else {
+                System.out.println("Has arribat tard al examen");
+                return;
+            }
+        }
+    }
 
 
-}
+    }
