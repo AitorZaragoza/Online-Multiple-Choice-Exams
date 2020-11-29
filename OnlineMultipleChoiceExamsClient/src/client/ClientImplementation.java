@@ -29,7 +29,6 @@ public class ClientImplementation extends UnicastRemoteObject implements ClientI
         this.studentId = keyboard.nextLine();
     }
 
-    @Override
     public void sendQuestion(Question q) {
         System.out.println(q.getQuestion());
         System.out.println(q.getChoice());
