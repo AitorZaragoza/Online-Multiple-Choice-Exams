@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 public class Answer implements Serializable {
 
-
         String question;
         Integer answer;
         Integer questionNumber;
@@ -46,4 +45,4 @@ public class Answer implements Serializable {
         }
 
 
-    }
+}

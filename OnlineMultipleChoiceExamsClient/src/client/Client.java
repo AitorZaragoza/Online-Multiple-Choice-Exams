@@ -13,27 +13,16 @@ public class Client {
         try {
             Registry registry = LocateRegistry.getRegistry(host);
             ClientImplementation student = new ClientImplementation();
-            ServerInterface stub = (ServerInterface) registry.lookup("Hello");
+            ServerInterface stub = (ServerInterface) registry.lookup("Exam");
             synchronized(student) {
                 student.setStudentId();
                 stub.addStudent(student);
                 student.wait();
-                stub.sendAnswer(student, student.answer);
-
-
+                while(true) {
+                    student.writeAnswer();
+                    stub.sendAnswer(student, student.answer);
+                }
             }
-
-
-
-
-
-
-
-
-
-
-
-
         } catch (RemoteException e) {
             System.err.println("remote exception: " + e.toString());
             e.printStackTrace();
