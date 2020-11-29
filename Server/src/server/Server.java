@@ -1,6 +1,7 @@
 package server;
 
 
+import java.awt.event.KeyEvent;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -31,16 +32,20 @@ public class Server {
 
             Registry registry = startRegistry(null);
             ServerImplementation obj = new ServerImplementation();
-            registry.rebind("Hello", (ServerImplementation) obj);
+            registry.rebind("Exam", (ServerImplementation) obj);
 
             while (true) {
+                obj.readExamFile();
+                obj.startExam();
+
                 synchronized (obj) {
-                    obj.readExamFile();
-                    obj.startExam();
-                    obj.wait();
+                    while (obj.end == false) {
+                        obj.wait();
+
+                    }
                 }
             }
-        } catch(Exception e){
+        }catch(Exception e){
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
         }
