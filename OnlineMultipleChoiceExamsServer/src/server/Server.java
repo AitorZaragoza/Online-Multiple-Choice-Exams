@@ -1,10 +1,14 @@
 package server;
 
 
+import common.ClientInterface;
+
 import java.awt.event.KeyEvent;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Server {
     private static Registry startRegistry(Integer port)
@@ -29,19 +33,36 @@ public class Server {
 
     public static void main(String args[]) {
         try {
-
             Registry registry = startRegistry(null);
             ServerImplementation obj = new ServerImplementation();
             registry.rebind("Exam", (ServerImplementation) obj);
+            String start_word = "end";
+            ServerImplementation.Interrupt interrupt = new ServerImplementation.Interrupt(obj, start_word);
 
             while (true) {
                 obj.readExamFile();
                 obj.startExam();
+                interrupt.start();
                 synchronized (obj) {
                     while (obj.end == false) {
                         obj.wait();
 
                     }
+                    System.out.println("S'ha acabat l'examen");
+                    List<ClientInterface> error_students = new ArrayList<ClientInterface>();
+                    for (ClientInterface c : obj.students) {
+                        try {
+                            c.sendGrade(obj.grades.get(c.getStudentId()));
+                        } catch (RemoteException e) {
+                            error_students.add(c);
+                        }
+                    }
+                    for (ClientInterface c : error_students) {
+                            obj.students.remove(c);
+                    }
+
+                    obj.writeGradesToCsvFile();
+                    System.exit(0);
                 }
             }
         }catch(Exception e){

@@ -7,6 +7,7 @@ import common.ServerInterface;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -20,7 +21,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
     public HashMap<String, Integer> examSolution = new HashMap<>();
     public HashMap<String, Double> grades = new HashMap<>();
     public boolean start = false;
-    public boolean end = false;
+    public static boolean end = false;
 
 
     public ServerImplementation() throws RemoteException {
@@ -29,7 +30,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
 
     public void startExam() {
         Scanner keyboard = new Scanner(System.in);
-        System.out.println("Prem tecla per tancar l'examen");
+        System.out.println("Prem qualsevol tecla per començar l'examen");
         keyboard.nextLine();
         synchronized (this) {
             this.start = true;
@@ -49,7 +50,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
     }
 
     public void readExamFile() {
-        String csvFile = "ExamQuestions.csv";
+        String csvFile = "exam.csv";
         BufferedReader br = null;
         String line;
 
@@ -87,6 +88,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         synchronized (this) {
             if (start == false) {
                 students.add(student);
+                grades.put(student.getStudentId(), 0.0);
             } else {
                 student.sendMessage("Has arribat tard al examen");
                 System.exit(0);
@@ -96,16 +98,15 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
 
     @Override
     public void sendAnswer(ClientInterface student, Answer answer) throws RemoteException {
-            synchronized (this) {
-                studentIsInGrades(student);
-                checkAnswer(student, answer);
-                this.notify();
+        synchronized (this) {
+            checkAnswer(student, answer);
+            this.notify();
             }
-                if(exam.size() > answer.getQuestionNumber() + 1){
-                    student.notifyQuestion(exam.get(answer.getQuestionNumber()+1));
-                }else{
-                    student.notifyGrade(grades.get(student.getStudentId()));
-                }
+            if(exam.size() > answer.getQuestionNumber() + 1){
+                student.sendQuestion(exam.get(answer.getQuestionNumber()+1));
+            }else{
+                student.sendGrade(grades.get(student.getStudentId()));
+            }
     }
 
     public void checkAnswer(ClientInterface student, Answer answer) throws RemoteException {
@@ -116,11 +117,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         }
     }
 
-    public void studentIsInGrades(ClientInterface student) throws RemoteException {
-            if(!grades.containsKey(student.getStudentId())){
-                grades.put(student.getStudentId(), 0.0);
-        }
-    }
+
 
     public double calculateGrade(double answersCorrects, int numQuestions){
         return (answersCorrects/numQuestions) * 10;
@@ -131,4 +128,54 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         double relationGradeQuestion = 10.0/exam.size();
         return actualGrade/relationGradeQuestion;
     }
+
+    public void writeGradesToCsvFile(){
+        String fileName = "grades.csv";
+
+        try (FileWriter writer = new FileWriter(fileName)){
+            for (String idStudent: this.grades.keySet()){
+                String key = idStudent;
+                String value = this.grades.get(idStudent).toString();
+                System.out.println(key + ": " + value);
+                writer.append(key);
+                writer.append(";");
+                writer.append(value);
+                writer.append(System.lineSeparator());
+            }
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static class Interrupt extends Thread {
+        String interrupt_key = null;
+        Object semaphore = null;
+
+        //semaphore must be the syncronized object
+        Interrupt(Object semaphore, String interrupt_key){
+            this.semaphore = semaphore;
+            this.interrupt_key = interrupt_key;
+        }
+
+        public void run(){
+            System.out.println("Introdueix la paraula '" + interrupt_key + "' per acabar l'examen");
+            while (true) {
+                //read the key
+                Scanner scanner = new Scanner(System.in);
+                String x = scanner.nextLine();
+                if (x.equals(this.interrupt_key)) {
+                    //if is the key we expect, change the variable, notify and return(finish thread)
+                    synchronized (this.semaphore) {
+                        end = true;
+                        this.semaphore.notify();
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+
 }
+

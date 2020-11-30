@@ -29,7 +29,7 @@ public class ClientImplementation extends UnicastRemoteObject implements ClientI
         this.studentId = keyboard.nextLine();
     }
 
-    public void sendQuestion(Question q) {
+    public void showQuestion(Question q) {
         System.out.println(q.getQuestion());
         System.out.println(q.getChoice());
         System.out.println("Enter answer");
@@ -49,17 +49,17 @@ public class ClientImplementation extends UnicastRemoteObject implements ClientI
 
     public void notifyStartExam(Question q) {
         System.out.println("El examen comença");
-        sendQuestion(q);
+        showQuestion(q);
         synchronized (this) {
             this.notify();
         }
     }
 
-    public void notifyQuestion(Question q){
-            sendQuestion(q);
+    public void sendQuestion(Question q){
+            showQuestion(q);
         }
 
-    public void notifyGrade(double grade){
+    public void sendGrade(double grade){
         System.out.println("La nota obtinguda és: " + grade);
         System.exit(0);
     }
