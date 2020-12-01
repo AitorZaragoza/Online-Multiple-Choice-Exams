@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1a5cdb73-6b10-4e9e-a8ef-795bf8d1a988" name="Default Changelist" comment="delete sendQuestion from ClientInterface">
+    <list default="true" id="1a5cdb73-6b10-4e9e-a8ef-795bf8d1a988" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/ClientImplementation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/ClientImplementation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/common/ClientInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/ClientInterface.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnlineMultipleChoiceExamsServer/ExamQuestions.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../OnlineMultipleChoiceExamsServer/src/common/ClientInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/../OnlineMultipleChoiceExamsServer/src/common/ClientInterface.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnlineMultipleChoiceExamsServer/src/server/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/../OnlineMultipleChoiceExamsServer/src/server/Server.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../OnlineMultipleChoiceExamsServer/src/server/ServerImplementation.java" beforeDir="false" afterPath="$PROJECT_DIR$/../OnlineMultipleChoiceExamsServer/src/server/ServerImplementation.java" afterDir="false" />
     </list>
@@ -122,8 +118,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/client/ClientImplementation.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="349">
-              <caret line="58" column="28" lean-forward="true" selection-start-line="58" selection-start-column="28" selection-end-line="58" selection-end-column="28" />
+            <state relative-caret-position="728">
+              <caret line="58" column="21" selection-start-line="58" selection-start-column="21" selection-end-line="58" selection-end-column="21" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#497#498#0" expanded="true" />
@@ -233,7 +229,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1606778460462" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1606780504894" />
     <property name="last_opened_file_path" value="$USER_HOME$/Desktop/Java RMI/HelloWorldCallback/HelloWorldCallbackClient" />
   </component>
   <component name="RecentsManager">
@@ -279,7 +275,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1606554270976</updated>
-      <workItem from="1606554274736" duration="45300000" />
+      <workItem from="1606554274736" duration="47241000" />
     </task>
     <task id="LOCAL-00001" summary="addStudent">
       <created>1606559156380</created>
@@ -323,11 +319,18 @@
       <option name="project" value="LOCAL" />
       <updated>1606653753634</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Final implementation of the program.">
+      <created>1606778477052</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1606778477052</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="45300000" />
+    <option name="totallyTimeSpent" value="47241000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
@@ -376,7 +379,8 @@
     <MESSAGE value="Answer" />
     <MESSAGE value="Implement the entire client with its synchronizations and the creation of the Answer class." />
     <MESSAGE value="delete sendQuestion from ClientInterface" />
-    <option name="LAST_COMMIT_MESSAGE" value="delete sendQuestion from ClientInterface" />
+    <MESSAGE value="Final implementation of the program." />
+    <option name="LAST_COMMIT_MESSAGE" value="Final implementation of the program." />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/Main.java">
@@ -465,8 +469,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/client/ClientImplementation.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="349">
-          <caret line="58" column="28" lean-forward="true" selection-start-line="58" selection-start-column="28" selection-end-line="58" selection-end-column="28" />
+        <state relative-caret-position="728">
+          <caret line="58" column="21" selection-start-line="58" selection-start-column="21" selection-end-line="58" selection-end-column="21" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#497#498#0" expanded="true" />

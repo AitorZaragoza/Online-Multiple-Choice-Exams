@@ -46,30 +46,16 @@ public class Server {
                 synchronized (obj) {
                     while (obj.end == false) {
                         obj.wait();
-
                     }
-                    System.out.println("S'ha acabat l'examen");
-                    List<ClientInterface> error_students = new ArrayList<ClientInterface>();
-                    for (ClientInterface c : obj.students) {
-                        try {
-                            c.sendGrade(obj.grades.get(c.getStudentId()));
-                        } catch (RemoteException e) {
-                            error_students.add(c);
-                        }
-                    }
-                    for (ClientInterface c : error_students) {
-                            obj.students.remove(c);
-                    }
-
-                    obj.writeGradesToCsvFile();
-                    System.exit(0);
+                    obj.endExam();
                 }
             }
         }catch(Exception e){
                 System.err.println("Server exception: " + e.toString());
                 e.printStackTrace();
             }
-        }
+
 
     }
+}
 

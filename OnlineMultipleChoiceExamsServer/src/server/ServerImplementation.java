@@ -16,7 +16,6 @@ import java.util.*;
 public class ServerImplementation extends UnicastRemoteObject implements ServerInterface {
 
     public List<ClientInterface> students = new ArrayList<>();
-
     public List<Question> exam = new ArrayList<>();
     public HashMap<String, Integer> examSolution = new HashMap<>();
     public HashMap<String, Double> grades = new HashMap<>();
@@ -148,6 +147,25 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         }
     }
 
+    public void endExam(){
+        System.out.println("S'ha acabat l'examen");
+        List<ClientInterface> error_students = new ArrayList<ClientInterface>();
+        for (ClientInterface c : this.students) {
+            try {
+                c.sendGrade(this.grades.get(c.getStudentId()));
+            } catch (RemoteException e) {
+                error_students.add(c);
+            }
+        }
+        for (ClientInterface c : error_students) {
+            this.students.remove(c);
+        }
+
+        writeGradesToCsvFile();
+        System.exit(0);
+    }
+
+
     public static class Interrupt extends Thread {
         String interrupt_key = null;
         Object semaphore = null;
@@ -174,8 +192,12 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
                 }
             }
         }
+
+
+
+        }
     }
 
 
-}
+
 
