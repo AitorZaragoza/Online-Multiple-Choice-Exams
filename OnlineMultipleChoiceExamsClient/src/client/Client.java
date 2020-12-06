@@ -5,9 +5,9 @@ import common.ServerInterface;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.HashMap;
 
 public class Client {
+
     public static void main(String[] args) {
         String host = (args.length < 1) ? null : args[0];
         try {

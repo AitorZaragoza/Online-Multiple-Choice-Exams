@@ -11,42 +11,35 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
 public class ServerImplementation extends UnicastRemoteObject implements ServerInterface {
-
+    public String csvFile;
+    public boolean start = false;
+    public static boolean end = false;
     public List<ClientInterface> students = new ArrayList<>();
     public List<Question> exam = new ArrayList<>();
     public HashMap<String, Integer> examSolution = new HashMap<>();
     public HashMap<String, Double> grades = new HashMap<>();
-    public boolean start = false;
-    public static boolean end = false;
-    public String csvFile;
 
     public ServerImplementation() throws RemoteException {
         super();
     }
 
-    public void startExam() {
+    public String readCsvFileName() {
         Scanner keyboard = new Scanner(System.in);
-        System.out.println("Press any key for start the exam");
-        keyboard.nextLine();
-        synchronized (this) {
-            this.start = true;
-        }
-        List<ClientInterface> error_students = new ArrayList<ClientInterface>();
-        for (ClientInterface c : students) {
-            try {
-                c.notifyStartExam(exam.get(0)); // notificar als alumnes que comença l'examen i enviar la primera pregunta
-            } catch (RemoteException e) {
-                System.out.println(" Student is not reachable");
-                error_students.add(c);
-            }
-        }
-        for (ClientInterface c : error_students) {
-            this.students.remove(c);
+        return keyboard.nextLine()+".csv";
+    }
+
+    public void existCsvFile() {
+        System.out.println("Please enter the name of the exam file. NOTICE: Type the file name without the file extension .csv");
+        csvFile = readCsvFileName();
+
+        File archivo = new File(csvFile);
+        if (!archivo.exists()) {
+            System.out.println("There is no exam file with this name.");
+            existCsvFile();
         }
     }
 
     public void readExamFile() {
-
         BufferedReader br = null;
         String line;
         existCsvFile();
@@ -80,20 +73,25 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         }
     }
 
-    public void existCsvFile() {
-
-        System.out.println("Please enter the name of the exam. NOTICE: Type the file name without the file extension .csv");
-        csvFile = readCsvFileName();
-        File archivo = new File(csvFile);
-        if (!archivo.exists()) {
-            System.out.println("There is no exam with this name.");
-            existCsvFile();
-        }
-    }
-
-    public String readCsvFileName() {
+    public void startExam() {
         Scanner keyboard = new Scanner(System.in);
-        return keyboard.nextLine()+".csv";
+        System.out.println("Press any key for start the exam");
+        keyboard.nextLine();
+        synchronized (this) {
+            this.start = true;
+        }
+        List<ClientInterface> error_students = new ArrayList<ClientInterface>();
+        for (ClientInterface c : students) {
+            try {
+                c.notifyStartExam(exam.get(0));
+            } catch (RemoteException e) {
+                System.out.println(" Student is not reachable");
+                error_students.add(c);
+            }
+        }
+        for (ClientInterface c : error_students) {
+            this.students.remove(c);
+        }
     }
 
     @Override
@@ -101,13 +99,13 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         synchronized (this) {
             if (start == false) {
                 if (grades.containsKey(student.getStudentId())) {
-                    student.sendMessage("Duplicate studentID. You can't take the exam");
+                    student.sendMessageError("Duplicate studentID. You can't take the exam");
                 }
                 students.add(student);
                 grades.put(student.getStudentId(), 0.0);
                 student.sendMessage("You have successfully registered for the exam. Please wait for the exam to start.");
             } else {
-                student.sendMessage("You were late for the exam");
+                student.sendMessageError("You were late for the exam");
             }
         }
     }
@@ -125,15 +123,6 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         }
     }
 
-    public void checkAnswer(ClientInterface student, Answer answer) throws RemoteException {
-        if (examSolution.get(answer.getQuestion()).compareTo(answer.getAnswer()) == 0) {
-            double answersCorrects = calculateAnswersCorrects(student) + 1.0;
-            double grade = calculateGrade(answersCorrects, exam.size());
-            grades.put(student.getStudentId(), grade);
-        }
-    }
-
-
     public double calculateGrade(double answersCorrects, int numQuestions) {
         return (answersCorrects / numQuestions) * 10;
     }
@@ -144,10 +133,27 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         return actualGrade / relationGradeQuestion;
     }
 
-    public void writeGradesToCsvFile() {
+    public double roundGrade(double grade, int decimalsNumber) {
+        double partWhole, result;
+        result = grade;
+        partWhole = Math.floor(result);
+        result = (result-partWhole)*Math.pow(10, decimalsNumber);
+        result = Math.round(result);
+        result = (result/Math.pow(10, decimalsNumber))+partWhole;
+        return result;
+    }
 
-        System.out.println("Please enter the name of the grades. NOTICE: Type the file name without the file extension .csv");
-        readCsvFileName();
+    public void checkAnswer(ClientInterface student, Answer answer) throws RemoteException {
+        if (examSolution.get(answer.getQuestion()).compareTo(answer.getAnswer()) == 0) {
+            double answersCorrects = calculateAnswersCorrects(student) + 1.0;
+            double grade = calculateGrade(answersCorrects, exam.size());
+            grades.put(student.getStudentId(), roundGrade(grade, 2));
+        }
+    }
+
+    public void writeGradesToCsvFile() {
+        System.out.println("Please enter the name of the grades file. NOTICE: Type the file name without the file extension .csv");
+        csvFile = readCsvFileName();
 
         try (FileWriter writer = new FileWriter(csvFile)) {
             for (String idStudent : this.grades.keySet()) {
@@ -165,7 +171,6 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         }
     }
 
-
     public void endExam() {
         System.out.println("Exam is over");
         List<ClientInterface> error_students = new ArrayList<ClientInterface>();
@@ -179,17 +184,14 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         for (ClientInterface c : error_students) {
             this.students.remove(c);
         }
-
         writeGradesToCsvFile();
         System.exit(0);
     }
-
 
     public static class Interrupt extends Thread {
         String interrupt_key = null;
         Object semaphore = null;
 
-        //semaphore must be the syncronized object
         Interrupt(Object semaphore, String interrupt_key) {
             this.semaphore = semaphore;
             this.interrupt_key = interrupt_key;
@@ -198,11 +200,10 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         public void run() {
             System.out.println("Type the word '" + interrupt_key + "' to end the exam");
             while (true) {
-                //read the key
                 Scanner scanner = new Scanner(System.in);
                 String x = scanner.nextLine();
                 if (x.equals(this.interrupt_key)) {
-                    //if is the key we expect, change the variable, notify and return(finish thread)
+
                     synchronized (this.semaphore) {
                         end = true;
                         this.semaphore.notify();
@@ -211,11 +212,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
                 }
             }
         }
-
-
     }
+
 }
-
-
-
 

@@ -1,14 +1,9 @@
 package server;
 
-
-import common.ClientInterface;
-
-import java.awt.event.KeyEvent;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
-import java.util.List;
+
 
 public class Server {
     private static Registry startRegistry(Integer port)
@@ -19,11 +14,8 @@ public class Server {
         try {
             Registry registry = LocateRegistry.getRegistry(port);
             registry.list();
-            // The above call will throw an exception
-            // if the registry does not already exist
             return registry;
         } catch (RemoteException ex) {
-            // No valid registry at that port.
             System.out.println("RMI registry cannot be located ");
             Registry registry = LocateRegistry.createRegistry(port);
             System.out.println("RMI registry created at port ");
@@ -38,7 +30,6 @@ public class Server {
             registry.rebind("Exam", (ServerImplementation) obj);
             String start_word = "end";
             ServerImplementation.Interrupt interrupt = new ServerImplementation.Interrupt(obj, start_word);
-
 
             while (true) {
                 obj.readExamFile();
@@ -58,5 +49,6 @@ public class Server {
 
 
     }
+
 }
 

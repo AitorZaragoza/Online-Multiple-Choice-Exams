@@ -5,13 +5,11 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 public class Answer implements Serializable {
-
     String question;
     Integer answer;
     Integer questionNumber;
 
     public Answer(){
-
     }
 
     public Answer(String question, Integer answer, Integer questionNumber ){

@@ -9,8 +9,7 @@ public class Question implements Serializable {
     public List<String> choice = new ArrayList<>();
 
     public Question() { }
-
-
+    
     public Question (String question, List<String> choice){
         this.question = question;
         this.choice = choice;
