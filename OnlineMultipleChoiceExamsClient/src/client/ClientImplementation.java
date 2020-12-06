@@ -25,7 +25,7 @@ public class ClientImplementation extends UnicastRemoteObject implements ClientI
 
     public void setStudentId() {
         Scanner keyboard = new Scanner(System.in);
-        System.out.println("Welcome to the exam. Please enter the StudentID");
+        System.out.println("Welcome to the exam. Enter the StudentID");
         this.studentId = keyboard.nextLine();
     }
 
@@ -73,11 +73,11 @@ public class ClientImplementation extends UnicastRemoteObject implements ClientI
             System.out.println("ERROR type: Please enter an answer that is between 1 and " + choiceMax);
             writeAnswer();
         } else {
-            validateIntervalAnswer(keyboard.nextInt(), 1, choiceMax);
+            checkRangeAnswer(keyboard.nextInt(), 1, choiceMax);
         }
     }
 
-    public void validateIntervalAnswer(int number, int choiceMin, int choiceMax) {
+    public void checkRangeAnswer(int number, int choiceMin, int choiceMax) {
         if (number >= choiceMin && number <= choiceMax) {
             answer.setAnswer(number);
             answer.setQuestionNumber(questionNumber);

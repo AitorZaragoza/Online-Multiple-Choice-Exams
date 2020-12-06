@@ -28,37 +28,70 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         return keyboard.nextLine()+".csv";
     }
 
-    public void existCsvFile() {
-        System.out.println("Please enter the name of the exam file. NOTICE: Type the file name without the file extension .csv");
+    public void checkExistCsvFile() {
+        System.out.println("Enter the name of the exam file. NOTICE: Type the file name without the file extension .csv");
         csvFile = readCsvFileName();
 
         File archivo = new File(csvFile);
         if (!archivo.exists()) {
             System.out.println("There is no exam file with this name.");
-            existCsvFile();
+            checkExistCsvFile();
+        }
+    }
+
+    public boolean isNumeric(String s) {
+        return s != null && s.matches("[-+]?\\d*\\.?\\d+");
+    }
+
+    public boolean checkFormatCsv(String[] data){
+        if(data.length < 4){
+            return false;
+        }else if(!isNumeric(data[data.length-1])){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    public boolean checkRangeAnswerSolution(List<String> choiceRead, Integer answerRead){
+        if(answerRead > choiceRead.size()){
+            return false;
+        }else {
+            return true;
         }
     }
 
     public void readExamFile() {
         BufferedReader br = null;
         String line;
-        existCsvFile();
+        checkExistCsvFile();
 
         try {
             br = new BufferedReader(new FileReader(csvFile));
             while ((line = br.readLine()) != null) {
                 Question question = new Question();
                 String[] data = line.split(";");
-                int size = data.length;
-                String questionRead = data[0];
-                int answerRead = Integer.parseInt(data[data.length - 1]);
-                List<String> choiceRead = new ArrayList<>(size - 2);
+                if(checkFormatCsv(data)) {
+                    int size = data.length;
+                    String questionRead = data[0];
+                    int answerRead = Integer.parseInt(data[data.length - 1]);
+                    List<String> choiceRead = new ArrayList<>(size - 2);
+                    choiceRead.addAll(Arrays.asList(data).subList(1, size - 1));
 
-                choiceRead.addAll(Arrays.asList(data).subList(1, size - 1));
-                question.setQuestion(questionRead);
-                question.setChoice(choiceRead);
-                examSolution.put(questionRead, answerRead);
-                exam.add(question);
+                    if(checkRangeAnswerSolution(choiceRead, answerRead)){
+                        question.setQuestion(questionRead);
+                        question.setChoice(choiceRead);
+                        examSolution.put(questionRead, answerRead);
+                        exam.add(question);
+                    }else{
+                        System.out.println("The format of "+ csvFile +" is not correct, a solution to the question is out of the range of choices. Please fix the file or enter a different one");
+                        readExamFile();
+                    }
+
+                }else{
+                    System.out.println("The format of "+ csvFile +" is not correct. Please fix the file or enter a different one");
+                    readExamFile();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -215,4 +248,3 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
     }
 
 }
-
