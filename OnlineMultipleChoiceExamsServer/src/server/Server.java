@@ -39,6 +39,7 @@ public class Server {
             String start_word = "end";
             ServerImplementation.Interrupt interrupt = new ServerImplementation.Interrupt(obj, start_word);
 
+
             while (true) {
                 obj.readExamFile();
                 obj.startExam();

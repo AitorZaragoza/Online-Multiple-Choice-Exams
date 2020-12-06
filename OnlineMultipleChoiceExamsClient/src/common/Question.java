@@ -24,6 +24,8 @@ public class Question implements Serializable {
         return choice;
     }
 
+    public int getNumberChoice(){ return choice.size();}
+
     public void setQuestion(String question) {
         this.question = question;
     }

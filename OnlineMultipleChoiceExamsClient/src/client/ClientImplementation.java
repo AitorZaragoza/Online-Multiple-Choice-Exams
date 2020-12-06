@@ -6,12 +6,14 @@ import common.Question;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 import java.util.Scanner;
 
 public class ClientImplementation extends UnicastRemoteObject implements ClientInterface {
 
     String studentId;
     Integer questionNumber = 0;
+    Integer choiceMax;
     Answer answer = new Answer();
 
 
@@ -25,30 +27,32 @@ public class ClientImplementation extends UnicastRemoteObject implements ClientI
 
     public void setStudentId() {
         Scanner keyboard = new Scanner(System.in);
-        System.out.println("enter studentID");
+        System.out.println("Enter studentID");
         this.studentId = keyboard.nextLine();
     }
 
     public void showQuestion(Question q) {
-        System.out.println(q.getQuestion());
-        System.out.println(q.getChoice());
-        System.out.println("Enter answer");
         answer.setQuestion(q.getQuestion());
+        choiceMax = q.getNumberChoice();
+        System.out.println(q.getQuestion());
+        printList(q.getChoice());
+        System.out.println("Enter answer");
+
     }
 
     public void writeAnswer() {
-        Scanner keyboard = new Scanner(System.in);
-        answer.setAnswer(keyboard.nextInt());
-        answer.setQuestionNumber(questionNumber);
+        validateTypeAnswer();
         questionNumber++;
+
     }
 
     public void sendMessage(String message) {
         System.out.println(message);
+        System.exit(0);
     }
 
     public void notifyStartExam(Question q) {
-        System.out.println("El examen comença");
+        System.out.println("Exam starts");
         showQuestion(q);
         synchronized (this) {
             this.notify();
@@ -60,9 +64,40 @@ public class ClientImplementation extends UnicastRemoteObject implements ClientI
         }
 
     public void sendGrade(double grade){
-        System.out.println("La nota obtinguda és: " + grade);
+        System.out.println("The grade obtained is: " + grade);
         System.exit(0);
     }
+
+    public void validateTypeAnswer(){
+        Scanner keyboard = new Scanner(System.in);
+        if(!keyboard.hasNextInt()){
+            keyboard.next();
+            System.out.println("ERROR type: Please enter an answer that is between 1 and " +choiceMax);
+            writeAnswer();
+        }else{
+            validateIntervalAnswer(keyboard.nextInt(), 1,choiceMax);
+        }
+    }
+
+    public void validateIntervalAnswer(int number, int choiceMin, int choiceMax){
+        if(number >= choiceMin && number <= choiceMax){
+            answer.setAnswer(number);
+            answer.setQuestionNumber(questionNumber);
+        }else{
+            System.out.println("ERROR interval: Please enter an answer that is between "+choiceMin+" and " +choiceMax);
+            writeAnswer();
+        }
+    }
+
+    public void printList(List<String> list){
+        for(String string : list){
+            System.out.println(string);
+        }
+        System.out.println(" ");
+    }
+
+
+
 }
 
 
