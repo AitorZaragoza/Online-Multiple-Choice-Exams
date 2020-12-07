@@ -4,6 +4,7 @@ import common.Answer;
 import common.ClientInterface;
 import common.Question;
 
+import java.nio.Buffer;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
@@ -39,6 +40,7 @@ public class ClientImplementation extends UnicastRemoteObject implements ClientI
     }
 
     public void notifyStartExam(Question q) {
+        /*cleanBuffer();*/
         System.out.println("Exam starts");
         sendQuestion(q);
         synchronized (this) {
@@ -66,7 +68,13 @@ public class ClientImplementation extends UnicastRemoteObject implements ClientI
         System.exit(0);
     }
 
+    public void cleanBuffer(){
+        Scanner keyboard = new Scanner(System.in);
+        keyboard.nextLine();
+    }
+
     public void writeAnswer() {
+        cleanBuffer();
         Scanner keyboard = new Scanner(System.in);
         if (!keyboard.hasNextInt()) {
             keyboard.next();
