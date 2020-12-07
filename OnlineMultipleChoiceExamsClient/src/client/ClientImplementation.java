@@ -68,13 +68,13 @@ public class ClientImplementation extends UnicastRemoteObject implements ClientI
         System.exit(0);
     }
 
-    public void cleanBuffer(){
+    public void clearBuffer(){
         Scanner keyboard = new Scanner(System.in);
         keyboard.nextLine();
     }
 
     public void writeAnswer() {
-        cleanBuffer();
+        clearBuffer();
         Scanner keyboard = new Scanner(System.in);
         if (!keyboard.hasNextInt()) {
             keyboard.next();
