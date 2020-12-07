@@ -61,6 +61,7 @@ public class ClientImplementation extends UnicastRemoteObject implements ClientI
         System.out.println(q.getQuestion());
         printChoices(q.getChoice());
         System.out.println("Enter answer");
+        clearBuffer();
     }
 
     public void sendGrade(double grade) {
@@ -74,7 +75,6 @@ public class ClientImplementation extends UnicastRemoteObject implements ClientI
     }
 
     public void writeAnswer() {
-        clearBuffer();
         Scanner keyboard = new Scanner(System.in);
         if (!keyboard.hasNextInt()) {
             keyboard.next();
