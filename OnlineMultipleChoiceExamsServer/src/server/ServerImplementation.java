@@ -118,6 +118,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         synchronized (this) {
             this.start = true;
         }
+        System.out.println("There are " + students.size() + " student/s on the exam ");
         List<ClientInterface> error_students = new ArrayList<ClientInterface>();
         for (ClientInterface c : students) {
             try {
