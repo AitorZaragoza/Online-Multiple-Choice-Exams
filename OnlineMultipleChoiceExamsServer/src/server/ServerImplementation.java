@@ -68,6 +68,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         examSolution.clear();
         exam.clear();
 
+
         try {
             br = new BufferedReader(new FileReader(csvFile));
             while ((line = br.readLine()) != null) {
@@ -88,11 +89,13 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
                     } else {
                         System.out.println("The format of " + csvFile + " is not correct, a solution to the question is out of the range of choices. Please fix the file or enter a different one");
                         readExamFile();
+                        return;
                     }
 
                 } else {
                     System.out.println("The format of " + csvFile + " is not correct. Please fix the file or enter a different one");
                     readExamFile();
+                    return;
                 }
             }
         } catch (IOException e) {
