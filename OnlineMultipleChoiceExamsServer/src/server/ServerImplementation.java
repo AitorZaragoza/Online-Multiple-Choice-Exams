@@ -176,6 +176,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         result = (result - partWhole) * Math.pow(10, decimalsNumber);
         result = Math.round(result);
         result = (result / Math.pow(10, decimalsNumber)) + partWhole;
+        result = (double)Math.round(result * 100d) / 100d;
         return result;
     }
 
