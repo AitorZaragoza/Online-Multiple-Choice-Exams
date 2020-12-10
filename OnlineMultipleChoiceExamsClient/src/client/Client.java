@@ -14,11 +14,11 @@ public class Client {
             Registry registry = LocateRegistry.getRegistry(host);
             ClientImplementation student = new ClientImplementation();
             ServerInterface stub = (ServerInterface) registry.lookup("Exam");
-            synchronized(student) {
+            synchronized (student) {
                 student.setStudentId();
                 stub.addStudent(student);
                 student.wait();
-                while(true) {
+                while (true) {
                     student.writeAnswer();
                     stub.sendAnswer(student, student.answer);
                 }

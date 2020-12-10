@@ -4,7 +4,6 @@ import common.Answer;
 import common.ClientInterface;
 import common.Question;
 
-import java.nio.Buffer;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
@@ -40,7 +39,6 @@ public class ClientImplementation extends UnicastRemoteObject implements ClientI
     }
 
     public void notifyStartExam(Question q) {
-        /*cleanBuffer();*/
         System.out.println("Exam starts");
         sendQuestion(q);
         synchronized (this) {
@@ -55,23 +53,15 @@ public class ClientImplementation extends UnicastRemoteObject implements ClientI
         System.out.println(" ");
     }
 
-    public void sendQuestion(Question q) {
-        answer.setQuestion(q.getQuestion());
-        choiceMax = q.getNumberChoice();
-        System.out.println(q.getQuestion());
-        printChoices(q.getChoice());
-        System.out.println("Enter answer");
-        clearBuffer();
-    }
-
-    public void sendGrade(double grade) {
-        System.out.println("The grade obtained is: " + grade);
-        System.exit(0);
-    }
-
-    public void clearBuffer(){
-        Scanner keyboard = new Scanner(System.in);
-        keyboard.nextLine();
+    public void checkRangeAnswer(int number, int choiceMin, int choiceMax) {
+        if (number >= choiceMin && number <= choiceMax) {
+            answer.setAnswer(number);
+            answer.setQuestionNumber(questionNumber);
+            questionNumber++;
+        } else {
+            System.out.println("ERROR interval: Please enter an answer that is between " + choiceMin + " and " + choiceMax);
+            writeAnswer();
+        }
     }
 
     public void writeAnswer() {
@@ -85,15 +75,17 @@ public class ClientImplementation extends UnicastRemoteObject implements ClientI
         }
     }
 
-    public void checkRangeAnswer(int number, int choiceMin, int choiceMax) {
-        if (number >= choiceMin && number <= choiceMax) {
-            answer.setAnswer(number);
-            answer.setQuestionNumber(questionNumber);
-            questionNumber++;
-        } else {
-            System.out.println("ERROR interval: Please enter an answer that is between " + choiceMin + " and " + choiceMax);
-            writeAnswer();
-        }
+    public void sendQuestion(Question q) {
+        answer.setQuestion(q.getQuestion());
+        choiceMax = q.getNumberChoice();
+        System.out.println(q.getQuestion());
+        printChoices(q.getChoice());
+        System.out.println("Enter answer");
+    }
+
+    public void sendGrade(double grade) {
+        System.out.println("The grade obtained is: " + grade);
+        System.exit(0);
     }
 
 }

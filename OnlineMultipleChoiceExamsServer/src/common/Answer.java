@@ -2,17 +2,16 @@ package common;
 
 
 import java.io.Serializable;
-import java.util.HashMap;
 
 public class Answer implements Serializable {
     String question;
     Integer answer;
     Integer questionNumber;
 
-    public Answer(){
+    public Answer() {
     }
 
-    public Answer(String question, Integer answer, Integer questionNumber ){
+    public Answer(String question, Integer answer, Integer questionNumber) {
         this.question = question;
         this.answer = answer;
         this.questionNumber = questionNumber;
@@ -23,20 +22,20 @@ public class Answer implements Serializable {
         this.question = question;
     }
 
-    public  void setAnswer(int answer){
+    public String getQuestion() {
+        return question;
+    }
+
+    public void setAnswer(int answer) {
         this.answer = answer;
+    }
+
+    public Integer getAnswer() {
+        return answer;
     }
 
     public void setQuestionNumber(Integer questionNumber) {
         this.questionNumber = questionNumber;
-    }
-
-    public String getQuestion(){
-        return question;
-    }
-
-    public Integer getAnswer(){
-        return answer;
     }
 
     public Integer getQuestionNumber() {

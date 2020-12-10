@@ -25,7 +25,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
 
     public String readCsvFileName() {
         Scanner keyboard = new Scanner(System.in);
-        return keyboard.nextLine()+".csv";
+        return keyboard.nextLine() + ".csv";
     }
 
     public void checkExistCsvFile() {
@@ -43,20 +43,20 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         return s != null && s.matches("[-+]?\\d*\\.?\\d+");
     }
 
-    public boolean checkFormatCsv(String[] data){
-        if(data.length < 4){
+    public boolean checkFormatCsv(String[] data) {
+        if (data.length < 4) {
             return false;
-        }else if(!isNumeric(data[data.length-1])){
+        } else if (!isNumeric(data[data.length - 1])) {
             return false;
-        }else{
+        } else {
             return true;
         }
     }
 
-    public boolean checkRangeAnswerSolution(List<String> choiceRead, Integer answerRead){
-        if(answerRead > choiceRead.size()){
+    public boolean checkRangeAnswerSolution(List<String> choiceRead, Integer answerRead) {
+        if (answerRead > choiceRead.size()) {
             return false;
-        }else {
+        } else {
             return true;
         }
     }
@@ -65,31 +65,33 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         BufferedReader br = null;
         String line;
         checkExistCsvFile();
+        examSolution.clear();
+        exam.clear();
 
         try {
             br = new BufferedReader(new FileReader(csvFile));
             while ((line = br.readLine()) != null) {
                 Question question = new Question();
                 String[] data = line.split(";");
-                if(checkFormatCsv(data)) {
+                if (checkFormatCsv(data)) {
                     int size = data.length;
                     String questionRead = data[0];
                     int answerRead = Integer.parseInt(data[data.length - 1]);
                     List<String> choiceRead = new ArrayList<>(size - 2);
                     choiceRead.addAll(Arrays.asList(data).subList(1, size - 1));
 
-                    if(checkRangeAnswerSolution(choiceRead, answerRead)){
+                    if (checkRangeAnswerSolution(choiceRead, answerRead)) {
                         question.setQuestion(questionRead);
                         question.setChoice(choiceRead);
                         examSolution.put(questionRead, answerRead);
                         exam.add(question);
-                    }else{
-                        System.out.println("The format of "+ csvFile +" is not correct, a solution to the question is out of the range of choices. Please fix the file or enter a different one");
+                    } else {
+                        System.out.println("The format of " + csvFile + " is not correct, a solution to the question is out of the range of choices. Please fix the file or enter a different one");
                         readExamFile();
                     }
 
-                }else{
-                    System.out.println("The format of "+ csvFile +" is not correct. Please fix the file or enter a different one");
+                } else {
+                    System.out.println("The format of " + csvFile + " is not correct. Please fix the file or enter a different one");
                     readExamFile();
                 }
             }
@@ -152,7 +154,8 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         if (exam.size() > answer.getQuestionNumber() + 1) {
             student.sendQuestion(exam.get(answer.getQuestionNumber() + 1));
         } else {
-            student.sendGrade(grades.get(student.getStudentId()));
+            double roundGrade = roundGrade(grades.get(student.getStudentId()), 2);
+            student.sendGrade(roundGrade);
         }
     }
 
@@ -170,9 +173,9 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         double partWhole, result;
         result = grade;
         partWhole = Math.floor(result);
-        result = (result-partWhole)*Math.pow(10, decimalsNumber);
+        result = (result - partWhole) * Math.pow(10, decimalsNumber);
         result = Math.round(result);
-        result = (result/Math.pow(10, decimalsNumber))+partWhole;
+        result = (result / Math.pow(10, decimalsNumber)) + partWhole;
         return result;
     }
 
@@ -180,7 +183,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         if (examSolution.get(answer.getQuestion()).compareTo(answer.getAnswer()) == 0) {
             double answersCorrects = calculateAnswersCorrects(student) + 1.0;
             double grade = calculateGrade(answersCorrects, exam.size());
-            grades.put(student.getStudentId(), roundGrade(grade, 2));
+            grades.put(student.getStudentId(), grade);
         }
     }
 
@@ -189,7 +192,9 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         csvFile = readCsvFileName();
 
         try (FileWriter writer = new FileWriter(csvFile)) {
+            System.out.println("\nGrades");
             for (String idStudent : this.grades.keySet()) {
+                this.grades.put(idStudent, roundGrade(this.grades.get(idStudent), 2));
                 String key = idStudent;
                 String value = this.grades.get(idStudent).toString();
                 System.out.println(key + ": " + value);
@@ -209,7 +214,8 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         List<ClientInterface> error_students = new ArrayList<ClientInterface>();
         for (ClientInterface c : this.students) {
             try {
-                c.sendGrade(this.grades.get(c.getStudentId()));
+                double roundGrade = roundGrade(this.grades.get(c.getStudentId()), 2);
+                c.sendGrade(roundGrade);
             } catch (RemoteException e) {
                 error_students.add(c);
             }

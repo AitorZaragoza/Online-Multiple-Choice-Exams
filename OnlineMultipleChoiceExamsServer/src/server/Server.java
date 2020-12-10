@@ -42,10 +42,10 @@ public class Server {
                     obj.endExam();
                 }
             }
-        }catch(Exception e){
-                System.err.println("Server exception: " + e.toString());
-                e.printStackTrace();
-            }
+        } catch (Exception e) {
+            System.err.println("Server exception: " + e.toString());
+            e.printStackTrace();
+        }
 
 
     }
